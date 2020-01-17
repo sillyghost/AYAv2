@@ -21,12 +21,12 @@ Before every major release:
 Check out the source code in the following directory hierarchy.
 
     cd /path/to/your/toplevel/build
-    git clone https://github.com/litecoin-project/gitian.sigs.ltc.git
-    git clone https://github.com/litecoin-project/litecoin-detached-sigs.git
+    git clone https://github.com/aryacoin-project/gitian.sigs.aya.git
+    git clone https://github.com/aryacoin-project/aryacoin-detached-sigs.git
     git clone https://github.com/devrandom/gitian-builder.git
-    git clone https://github.com/litecoin-project/litecoin.git
+    git clone https://github.com/aryacoin-project/aryacoin.git
 
-### Litecoin maintainers/release engineers, update version in sources
+### Aryacoin maintainers/release engineers, update version in sources
 
 Update the following:
 
@@ -63,16 +63,16 @@ Tag version (or release candidate) in git
 
 Setup Gitian descriptors:
 
-    pushd ./litecoin
+    pushd ./aryacoin
     export SIGNER=(your Gitian key, ie bluematt, sipa, etc)
     export VERSION=(new version, e.g. 0.8.0)
     git fetch
     git checkout v${VERSION}
     popd
 
-Ensure your gitian.sigs.ltc are up-to-date if you wish to gverify your builds against other Gitian signatures.
+Ensure your gitian.sigs.aya are up-to-date if you wish to gverify your builds against other Gitian signatures.
 
-    pushd ./gitian.sigs.ltc
+    pushd ./gitian.sigs.aya
     git pull
     popd
 
@@ -97,7 +97,7 @@ Create the OS X SDK tarball, see the [OS X readme](README_osx.md) for details, a
 By default, Gitian will fetch source files as needed. To cache them ahead of time:
 
     pushd ./gitian-builder
-    make -C ../litecoin/depends download SOURCES_PATH=`pwd`/cache/common
+    make -C ../aryacoin/depends download SOURCES_PATH=`pwd`/cache/common
     popd
 
 Only missing files will be fetched, so this is safe to re-run for each build.
@@ -105,94 +105,94 @@ Only missing files will be fetched, so this is safe to re-run for each build.
 NOTE: Offline builds must use the --url flag to ensure Gitian fetches only from local URLs. For example:
 
     pushd ./gitian-builder
-    ./bin/gbuild --url litecoin=/path/to/litecoin,signature=/path/to/sigs {rest of arguments}
+    ./bin/gbuild --url aryacoin=/path/to/aryacoin,signature=/path/to/sigs {rest of arguments}
     popd
 
 The gbuild invocations below <b>DO NOT DO THIS</b> by default.
 
-### Build and sign Litecoin Core for Linux, Windows, and OS X:
+### Build and sign Aryacoin Core for Linux, Windows, and OS X:
 
     pushd ./gitian-builder
-    ./bin/gbuild --memory 3000 --commit litecoin=v${VERSION} ../litecoin/contrib/gitian-descriptors/gitian-linux.yml
-    ./bin/gsign --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs.ltc/ ../litecoin/contrib/gitian-descriptors/gitian-linux.yml
-    mv build/out/litecoin-*.tar.gz build/out/src/litecoin-*.tar.gz ../
+    ./bin/gbuild --memory 3000 --commit aryacoin=v${VERSION} ../aryacoin/contrib/gitian-descriptors/gitian-linux.yml
+    ./bin/gsign --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs.aya/ ../aryacoin/contrib/gitian-descriptors/gitian-linux.yml
+    mv build/out/aryacoin-*.tar.gz build/out/src/aryacoin-*.tar.gz ../
 
-    ./bin/gbuild --memory 3000 --commit litecoin=v${VERSION} ../litecoin/contrib/gitian-descriptors/gitian-win.yml
-    ./bin/gsign --signer $SIGNER --release ${VERSION}-win-unsigned --destination ../gitian.sigs.ltc/ ../litecoin/contrib/gitian-descriptors/gitian-win.yml
-    mv build/out/litecoin-*-win-unsigned.tar.gz inputs/litecoin-win-unsigned.tar.gz
-    mv build/out/litecoin-*.zip build/out/litecoin-*.exe ../
+    ./bin/gbuild --memory 3000 --commit aryacoin=v${VERSION} ../aryacoin/contrib/gitian-descriptors/gitian-win.yml
+    ./bin/gsign --signer $SIGNER --release ${VERSION}-win-unsigned --destination ../gitian.sigs.aya/ ../aryacoin/contrib/gitian-descriptors/gitian-win.yml
+    mv build/out/aryacoin-*-win-unsigned.tar.gz inputs/aryacoin-win-unsigned.tar.gz
+    mv build/out/aryacoin-*.zip build/out/aryacoin-*.exe ../
 
-    ./bin/gbuild --memory 3000 --commit litecoin=v${VERSION} ../litecoin/contrib/gitian-descriptors/gitian-osx.yml
-    ./bin/gsign --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs.ltc/ ../litecoin/contrib/gitian-descriptors/gitian-osx.yml
-    mv build/out/litecoin-*-osx-unsigned.tar.gz inputs/litecoin-osx-unsigned.tar.gz
-    mv build/out/litecoin-*.tar.gz build/out/litecoin-*.dmg ../
+    ./bin/gbuild --memory 3000 --commit aryacoin=v${VERSION} ../aryacoin/contrib/gitian-descriptors/gitian-osx.yml
+    ./bin/gsign --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs.aya/ ../aryacoin/contrib/gitian-descriptors/gitian-osx.yml
+    mv build/out/aryacoin-*-osx-unsigned.tar.gz inputs/aryacoin-osx-unsigned.tar.gz
+    mv build/out/aryacoin-*.tar.gz build/out/aryacoin-*.dmg ../
     popd
 
 Build output expected:
 
-  1. source tarball (`litecoin-${VERSION}.tar.gz`)
-  2. linux 32-bit and 64-bit dist tarballs (`litecoin-${VERSION}-linux[32|64].tar.gz`)
-  3. windows 32-bit and 64-bit unsigned installers and dist zips (`litecoin-${VERSION}-win[32|64]-setup-unsigned.exe`, `litecoin-${VERSION}-win[32|64].zip`)
-  4. OS X unsigned installer and dist tarball (`litecoin-${VERSION}-osx-unsigned.dmg`, `litecoin-${VERSION}-osx64.tar.gz`)
-  5. Gitian signatures (in `gitian.sigs.ltc/${VERSION}-<linux|{win,osx}-unsigned>/(your Gitian key)/`)
+  1. source tarball (`aryacoin-${VERSION}.tar.gz`)
+  2. linux 32-bit and 64-bit dist tarballs (`aryacoin-${VERSION}-linux[32|64].tar.gz`)
+  3. windows 32-bit and 64-bit unsigned installers and dist zips (`aryacoin-${VERSION}-win[32|64]-setup-unsigned.exe`, `aryacoin-${VERSION}-win[32|64].zip`)
+  4. OS X unsigned installer and dist tarball (`aryacoin-${VERSION}-osx-unsigned.dmg`, `aryacoin-${VERSION}-osx64.tar.gz`)
+  5. Gitian signatures (in `gitian.sigs.aya/${VERSION}-<linux|{win,osx}-unsigned>/(your Gitian key)/`)
 
 ### Verify other gitian builders signatures to your own. (Optional)
 
 Add other gitian builders keys to your gpg keyring
 
-    gpg --import litecoin/contrib/gitian-keys/*.pgp
+    gpg --import aryacoin/contrib/gitian-keys/*.pgp
 
 Verify the signatures
 
     pushd ./gitian-builder
-    ./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-linux ../litecoin/contrib/gitian-descriptors/gitian-linux.yml
-    ./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-win-unsigned ../litecoin/contrib/gitian-descriptors/gitian-win.yml
-    ./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-osx-unsigned ../litecoin/contrib/gitian-descriptors/gitian-osx.yml
+    ./bin/gverify -v -d ../gitian.sigs.aya/ -r ${VERSION}-linux ../aryacoin/contrib/gitian-descriptors/gitian-linux.yml
+    ./bin/gverify -v -d ../gitian.sigs.aya/ -r ${VERSION}-win-unsigned ../aryacoin/contrib/gitian-descriptors/gitian-win.yml
+    ./bin/gverify -v -d ../gitian.sigs.aya/ -r ${VERSION}-osx-unsigned ../aryacoin/contrib/gitian-descriptors/gitian-osx.yml
     popd
 
 ### Next steps:
 
-Commit your signature to gitian.sigs.ltc:
+Commit your signature to gitian.sigs.aya:
 
-    pushd gitian.sigs.ltc
+    pushd gitian.sigs.aya
     git add ${VERSION}-linux/${SIGNER}
     git add ${VERSION}-win-unsigned/${SIGNER}
     git add ${VERSION}-osx-unsigned/${SIGNER}
     git commit -a
-    git push  # Assuming you can push to the gitian.sigs.ltc tree
+    git push  # Assuming you can push to the gitian.sigs.aya tree
     popd
 
 Wait for Windows/OS X detached signatures:
 
 - Once the Windows/OS X builds each have 3 matching signatures, they will be signed with their respective release keys.
-- Detached signatures will then be committed to the [litecoin-detached-sigs](https://github.com/litecoin-project/litecoin-detached-sigs) repository, which can be combined with the unsigned apps to create signed binaries.
+- Detached signatures will then be committed to the [aryacoin-detached-sigs](https://github.com/aryacoin-project/aryacoin-detached-sigs) repository, which can be combined with the unsigned apps to create signed binaries.
 
 Create (and optionally verify) the signed OS X binary:
 
     pushd ./gitian-builder
-    ./bin/gbuild -i --commit signature=v${VERSION} ../litecoin/contrib/gitian-descriptors/gitian-osx-signer.yml
-    ./bin/gsign --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs.ltc/ ../litecoin/contrib/gitian-descriptors/gitian-osx-signer.yml
-    ./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-osx-signed ../litecoin/contrib/gitian-descriptors/gitian-osx-signer.yml
-    mv build/out/litecoin-osx-signed.dmg ../litecoin-${VERSION}-osx.dmg
+    ./bin/gbuild -i --commit signature=v${VERSION} ../aryacoin/contrib/gitian-descriptors/gitian-osx-signer.yml
+    ./bin/gsign --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs.aya/ ../aryacoin/contrib/gitian-descriptors/gitian-osx-signer.yml
+    ./bin/gverify -v -d ../gitian.sigs.aya/ -r ${VERSION}-osx-signed ../aryacoin/contrib/gitian-descriptors/gitian-osx-signer.yml
+    mv build/out/aryacoin-osx-signed.dmg ../aryacoin-${VERSION}-osx.dmg
     popd
 
 Create (and optionally verify) the signed Windows binaries:
 
     pushd ./gitian-builder
-    ./bin/gbuild -i --commit signature=v${VERSION} ../litecoin/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gsign --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs.ltc/ ../litecoin/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-win-signed ../litecoin/contrib/gitian-descriptors/gitian-win-signer.yml
-    mv build/out/litecoin-*win64-setup.exe ../litecoin-${VERSION}-win64-setup.exe
-    mv build/out/litecoin-*win32-setup.exe ../litecoin-${VERSION}-win32-setup.exe
+    ./bin/gbuild -i --commit signature=v${VERSION} ../aryacoin/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gsign --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs.aya/ ../aryacoin/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gverify -v -d ../gitian.sigs.aya/ -r ${VERSION}-win-signed ../aryacoin/contrib/gitian-descriptors/gitian-win-signer.yml
+    mv build/out/aryacoin-*win64-setup.exe ../aryacoin-${VERSION}-win64-setup.exe
+    mv build/out/aryacoin-*win32-setup.exe ../aryacoin-${VERSION}-win32-setup.exe
     popd
 
 Commit your signature for the signed OS X/Windows binaries:
 
-    pushd gitian.sigs.ltc
+    pushd gitian.sigs.aya
     git add ${VERSION}-osx-signed/${SIGNER}
     git add ${VERSION}-win-signed/${SIGNER}
     git commit -a
-    git push  # Assuming you can push to the gitian.sigs.ltc tree
+    git push  # Assuming you can push to the gitian.sigs.aya tree
     popd
 
 ### After 3 or more people have gitian-built and their results match:
@@ -205,23 +205,23 @@ sha256sum * > SHA256SUMS
 
 The list of files should be:
 ```
-litecoin-${VERSION}-aarch64-linux-gnu.tar.gz
-litecoin-${VERSION}-arm-linux-gnueabihf.tar.gz
-litecoin-${VERSION}-i686-pc-linux-gnu.tar.gz
-litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
-litecoin-${VERSION}-osx64.tar.gz
-litecoin-${VERSION}-osx.dmg
-litecoin-${VERSION}.tar.gz
-litecoin-${VERSION}-win32-setup.exe
-litecoin-${VERSION}-win32.zip
-litecoin-${VERSION}-win64-setup.exe
-litecoin-${VERSION}-win64.zip
+aryacoin-${VERSION}-aarch64-linux-gnu.tar.gz
+aryacoin-${VERSION}-arm-linux-gnueabihf.tar.gz
+aryacoin-${VERSION}-i686-pc-linux-gnu.tar.gz
+aryacoin-${VERSION}-x86_64-linux-gnu.tar.gz
+aryacoin-${VERSION}-osx64.tar.gz
+aryacoin-${VERSION}-osx.dmg
+aryacoin-${VERSION}.tar.gz
+aryacoin-${VERSION}-win32-setup.exe
+aryacoin-${VERSION}-win32.zip
+aryacoin-${VERSION}-win64-setup.exe
+aryacoin-${VERSION}-win64.zip
 ```
 The `*-debug*` files generated by the gitian build contain debug symbols
 for troubleshooting by developers. It is assumed that anyone that is interested
 in debugging can run gitian to generate the files for themselves. To avoid
 end-user confusion about which file to pick, as well as save storage
-space *do not upload these to the litecoin.org server, nor put them in the torrent*.
+space *do not upload these to the aryacoin.org server, nor put them in the torrent*.
 
 - GPG-sign it, delete the unsigned file:
 ```
@@ -231,23 +231,23 @@ rm SHA256SUMS
 (the digest algorithm is forced to sha256 to avoid confusion of the `Hash:` header that GPG adds with the SHA256 used for the files)
 Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spurious/nonsensical entry.
 
-- Upload zips and installers, as well as `SHA256SUMS.asc` from last step, to the litecoin.org server.
+- Upload zips and installers, as well as `SHA256SUMS.asc` from last step, to the aryacoin.org server.
 
-- Update litecoin.org version
+- Update aryacoin.org version
 
 - Announce the release:
 
-  - litecoin-dev mailing list
+  - aryacoin-dev mailing list
 
-  - Litecoin Core announcements list https://groups.google.com/forum/#!forum/litecoin-dev
+  - Aryacoin Core announcements list https://groups.google.com/forum/#!forum/aryacoin-dev
 
-  - blog.litecoin.org blog post
+  - blog.aryacoin.org blog post
 
-  - litecointalk.io forum announcement
+  - aryacointalk.io forum announcement
 
-  - Update title of #litecoin on Freenode IRC
+  - Update title of #aryacoin on Freenode IRC
 
-  - Optionally twitter, reddit /r/Litecoin, ... but this will usually sort out itself
+  - Optionally twitter, reddit /r/Aryacoin, ... but this will usually sort out itself
 
   - Add release notes for the new version to the directory `doc/release-notes` in git master
 

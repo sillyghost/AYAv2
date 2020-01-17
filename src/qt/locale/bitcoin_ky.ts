@@ -30,8 +30,8 @@
         <translation>Билдирүүнү &amp;текшерүү...</translation>
     </message>
     <message>
-        <source>Litecoin</source>
-        <translation>Litecoin</translation>
+        <source>Aryacoin</source>
+        <translation>Aryacoin</translation>
     </message>
     <message>
         <source>Wallet</source>
