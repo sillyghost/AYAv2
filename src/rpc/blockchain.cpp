@@ -783,11 +783,17 @@ UniValue gettxout(const UniValue& params, bool fHelp)
     CBlockIndex *pindex = it->second;
     ret.push_back(Pair("bestblock", pindex->GetBlockHash().GetHex()));
     if ((unsigned int)coins.nHeight == MEMPOOL_HEIGHT)
+    {
         ret.push_back(Pair("confirmations", 0));
         ret.push_back(Pair("rawconfirmations", 0));
+    }
+        
     else
+    {
         ret.push_back(Pair("confirmations", komodo_dpowconfs(coins.nHeight,pindex->nHeight - coins.nHeight + 1)));
         ret.push_back(Pair("rawconfirmations", pindex->nHeight - coins.nHeight + 1));
+ 
+    }
     ret.push_back(Pair("value", ValueFromAmount(coins.vout[n].nValue)));
     UniValue o(UniValue::VOBJ);
     ScriptPubKeyToJSON(coins.vout[n].scriptPubKey, o, true);
