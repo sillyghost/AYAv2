@@ -780,6 +780,9 @@ void InitLogging()
 /** Initialize bitcoin.
  *  @pre Parameters should be parsed and config file should be read.
  */
+
+int32_t komodo_init();
+
 bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 {
     // ********************************************************* Step 1: setup
@@ -842,6 +845,8 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     const CChainParams& chainparams = Params();
 
     // also see: InitParameterInteraction()
+    
+     komodo_init();
 
     // if using block pruning, then disable txindex
     if (GetArg("-prune", 0)) {
