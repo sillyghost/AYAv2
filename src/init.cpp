@@ -70,6 +70,7 @@ static const bool DEFAULT_DISABLE_SAFEMODE = false;
 static const bool DEFAULT_STOPAFTERBLOCKIMPORT = false;
 
 
+
 #if ENABLE_ZMQ
 static CZMQNotificationInterface* pzmqNotificationInterface = NULL;
 #endif
@@ -133,6 +134,7 @@ bool ShutdownRequested()
 {
     return fRequestShutdown;
 }
+
 
 /**
  * This is a minimally invasive approach to shutdown on LevelDB read errors from the
@@ -845,9 +847,17 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     const CChainParams& chainparams = Params();
 
     // also see: InitParameterInteraction()
-    
-     komodo_init();
+    //
+    if(GetArg("-disabledpow", 1)){
+       printf("NOTE -> DPOW Enabled");
 
+        komodo_init();
+    }
+    else{
+        //dpowenabled=false;
+         printf("NOTE -> DPOW Dsiabled, your node might be affected by POW based attacks !");
+    }
+//komodo_init();
     // if using block pruning, then disable txindex
     if (GetArg("-prune", 0)) {
         if (GetBoolArg("-txindex", DEFAULT_TXINDEX))

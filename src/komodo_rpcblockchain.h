@@ -26,19 +26,32 @@ extern int32_t NOTARIZED_HEIGHT;
 
 int32_t komodo_dpowconfs(int32_t txheight,int32_t numconfs)
 {
-    // DPoW confs are on by default
-    int32_t dpowconfs = 1;
-    DPOWCONFS = GetArg("-dpowconfs",dpowconfs);
-    if ( DPOWCONFS != 0 && txheight > 0 && numconfs > 0 )
+    if(dpowenabled())
     {
-        if ( NOTARIZED_HEIGHT > 0 )
+       // Dpow Enabled
+
+        // DPoW confs are on by default
+        printf("NOTE (komodo_rpcblockchain_h)-> DPOW Enabled");
+        int32_t dpowconfs = 1;
+        DPOWCONFS = GetArg("-dpowconfs",dpowconfs);
+        if ( DPOWCONFS != 0 && txheight > 0 && numconfs > 0 )
         {
-            if ( txheight < NOTARIZED_HEIGHT )
-                return(numconfs);
-            else return(1);
+            if ( NOTARIZED_HEIGHT > 0 )
+            {
+                if ( txheight < NOTARIZED_HEIGHT )
+                    return(numconfs);
+                else return(1);
+            }
         }
+        return(numconfs);
+    
     }
-    return(numconfs);
+    else
+    {    printf("NOTE (komodo_rpcblockchain_h)-> DPOW Disabled");
+        return 0;
+    }
+
+    
 }
 
 int32_t komodo_MoM(int32_t *notarized_heightp,uint256 *MoMp,uint256 *kmdtxidp,int32_t nHeight,uint256 *MoMoMp,int32_t *MoMoMoffsetp,int32_t *MoMoMdepthp,int32_t *kmdstartip,int32_t *kmdendip)

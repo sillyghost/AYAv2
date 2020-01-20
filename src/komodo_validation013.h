@@ -660,6 +660,14 @@ int32_t getkmdseason(int32_t height)
 
 int32_t komodo_init()
 {
+     if(dpowenabled()){
+       printf("NOTE (komodo_validations.h) -> DPOW Enabled");
+     
+    }
+    else{
+         printf("NOTE (komodo_validations.h) -> DPOW Disabled");
+         return 0;
+    }
     NOTARY_PUBKEY = GetArg("-pubkey", "");
     decode_hex(NOTARY_PUBKEY33,33,(char *)NOTARY_PUBKEY.c_str());
     if ( GetBoolArg("-txindex", DEFAULT_TXINDEX) == 0 )

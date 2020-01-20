@@ -21,6 +21,7 @@
 #include "hash.h"
 #include "komodo_rpcblockchain.h"
 
+
 #include <stdint.h>
 
 #include <univalue.h>
@@ -72,8 +73,19 @@ UniValue blockheaderToJSON(const CBlockIndex* blockindex)
     // Only report confirmations if the block is on the main chain
     if (chainActive.Contains(blockindex))
         confirmations = chainActive.Height() - blockindex->nHeight + 1;
-    result.push_back(Pair("confirmations", komodo_dpowconfs(blockindex->nHeight,confirmations)));
-    result.push_back(Pair("rawconfirmations", confirmations));
+    if(dpowenabled())
+    {
+       // Dpow Enabled
+        result.push_back(Pair("confirmations", komodo_dpowconfs(blockindex->nHeight,confirmations)));
+        result.push_back(Pair("rawconfirmations", confirmations));
+        printf("NOTE (blockchain.cpp)-> DPOW Enabled");
+    
+    }
+    else
+    { printf("NOTE (blockchain.cpp)-> DPOW Disabled");
+        result.push_back(Pair("confirmations", confirmations));
+    }
+    
     result.push_back(Pair("height", blockindex->nHeight));
     result.push_back(Pair("version", blockindex->nVersion));
     result.push_back(Pair("versionHex", strprintf("%08x", blockindex->nVersion)));
@@ -101,8 +113,19 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     // Only report confirmations if the block is on the main chain
     if (chainActive.Contains(blockindex))
         confirmations = chainActive.Height() - blockindex->nHeight + 1;
-    result.push_back(Pair("confirmations", komodo_dpowconfs(blockindex->nHeight,confirmations)));
-    result.push_back(Pair("rawconfirmations", confirmations));
+    if(dpowenabled())
+    {
+       // Dpow Enabled
+        printf("NOTE (blockchain.cpp)-> DPOW Enabled");
+        result.push_back(Pair("confirmations", komodo_dpowconfs(blockindex->nHeight,confirmations)));
+        result.push_back(Pair("rawconfirmations", confirmations));
+    
+    }
+    else
+    { printf("NOTE (blockchain.cpp)-> DPOW Disabled");
+        result.push_back(Pair("confirmations", confirmations));
+    }
+    
     result.push_back(Pair("strippedsize", (int)::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS)));
     result.push_back(Pair("size", (int)::GetSerializeSize(block, SER_NETWORK, PROTOCOL_VERSION)));
     result.push_back(Pair("weight", (int)::GetBlockWeight(block)));
@@ -790,8 +813,20 @@ UniValue gettxout(const UniValue& params, bool fHelp)
         
     else
     {
-        ret.push_back(Pair("confirmations", komodo_dpowconfs(coins.nHeight,pindex->nHeight - coins.nHeight + 1)));
-        ret.push_back(Pair("rawconfirmations", pindex->nHeight - coins.nHeight + 1));
+        if(dpowenabled())
+        {
+           // Dpow Enabled
+            printf("NOTE (blockchain.cpp)-> DPOW Enabled");
+            ret.push_back(Pair("confirmations", komodo_dpowconfs(coins.nHeight,pindex->nHeight - coins.nHeight + 1)));
+            ret.push_back(Pair("rawconfirmations", pindex->nHeight - coins.nHeight + 1));
+        
+        }
+        else
+        {
+            printf("NOTE (blockchain.cpp)-> DPOW Disabled");
+            ret.push_back(Pair("confirmations", pindex->nHeight - coins.nHeight + 1));
+        }
+        
  
     }
     ret.push_back(Pair("value", ValueFromAmount(coins.vout[n].nValue)));

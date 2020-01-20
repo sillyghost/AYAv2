@@ -30,6 +30,7 @@ using namespace std;
 int64_t nWalletUnlockTime;
 static CCriticalSection cs_nWalletUnlockTime;
 
+
 int32_t komodo_dpowconfs(int32_t height,int32_t numconfs);
 
 std::string HelpRequiringPassphrase()
@@ -59,32 +60,82 @@ void EnsureWalletIsUnlocked()
 
 int32_t komodo_blockheight(uint256 hash)
 {
-    BlockMap::const_iterator it; CBlockIndex *pindex = 0;
-    if ( (it = mapBlockIndex.find(hash)) != mapBlockIndex.end() )
+    if(dpowenabled())
     {
-        if ( (pindex= it->second) != 0 )
-            return(pindex->nHeight);
+        // Dpow Enabled
+        printf("NOTE (rpcwallet.cpp) -> DPOW Enabled");
+        BlockMap::const_iterator it; CBlockIndex *pindex = 0;
+        if ( (it = mapBlockIndex.find(hash)) != mapBlockIndex.end() )
+        {
+            if ( (pindex= it->second) != 0 )
+                return(pindex->nHeight);
+        }
+                
     }
+    else
+    {
+         printf("NOTE (rpcwallet.cpp) -> DPOW Disabled");
+        // Dpow Disabled 
+       
+    }           
+                
+    
     return(0);
 }
 
 void WalletTxToJSON(const CWalletTx& wtx, UniValue& entry)
 {
     int confirms = wtx.GetDepthInMainChain();
-   // entry.push_back(Pair("confirmations", confirms));
-    entry.push_back(Pair("rawconfirmations", confirms));
+   // 
+    if(dpowenabled())
+    {
+        // Dpow Enabled
+         printf("NOTE (rpcwallet.cpp) -> DPOW Enabled");
+         entry.push_back(Pair("rawconfirmations", confirms));
+    }
+    else
+    {
+
+        // Dpow Disabled 
+         printf("NOTE (rpcwallet.cpp) -> DPOW Disabled");
+       entry.push_back(Pair("confirmations", confirms));
+    } 
+   
     if (wtx.IsCoinBase())
         entry.push_back(Pair("generated", true));
-    if (confirms > 0)
+
+    if(dpowenabled())
     {
-        entry.push_back(Pair("confirmations", komodo_dpowconfs((int32_t)komodo_blockheight(wtx.hashBlock),confirms)));
-        entry.push_back(Pair("blockhash", wtx.hashBlock.GetHex()));
-        entry.push_back(Pair("blockindex", wtx.nIndex));
-        entry.push_back(Pair("blocktime", mapBlockIndex[wtx.hashBlock]->GetBlockTime()));
-    } else {
-         entry.push_back(Pair("confirmations", confirms));
-        entry.push_back(Pair("trusted", wtx.IsTrusted()));
+        // Dpow Enabled
+         printf("NOTE (rpcwallet.cpp) -> DPOW Enabled");
+        if (confirms > 0)
+        {
+            entry.push_back(Pair("confirmations", komodo_dpowconfs((int32_t)komodo_blockheight(wtx.hashBlock),confirms)));
+            entry.push_back(Pair("blockhash", wtx.hashBlock.GetHex()));
+            entry.push_back(Pair("blockindex", wtx.nIndex));
+            entry.push_back(Pair("blocktime", mapBlockIndex[wtx.hashBlock]->GetBlockTime()));
+        } else {
+             entry.push_back(Pair("confirmations", confirms));
+            entry.push_back(Pair("trusted", wtx.IsTrusted()));
+        }
     }
+    else
+    {
+
+        // Dpow Disabled 
+         printf("NOTE (rpcwallet.cpp) -> DPOW Disabled");
+        if (confirms > 0)
+        {
+            //entry.push_back(Pair("confirmations", komodo_dpowconfs((int32_t)komodo_blockheight(wtx.hashBlock),confirms)));
+            entry.push_back(Pair("blockhash", wtx.hashBlock.GetHex()));
+            entry.push_back(Pair("blockindex", wtx.nIndex));
+            entry.push_back(Pair("blocktime", mapBlockIndex[wtx.hashBlock]->GetBlockTime()));
+        } else {
+            // entry.push_back(Pair("confirmations", confirms));
+            entry.push_back(Pair("trusted", wtx.IsTrusted()));
+        }
+    } 
+    
     uint256 hash = wtx.GetHash();
     entry.push_back(Pair("txid", hash.GetHex()));
     UniValue conflicts(UniValue::VARR);
@@ -2444,15 +2495,30 @@ UniValue listunspent(const UniValue& params, bool fHelp)
                     entry.push_back(Pair("redeemScript", HexStr(redeemScript.begin(), redeemScript.end())));
             }
         }
-        int32_t txheight = -1;
-        if ( chainActive.Tip() != NULL )
-            txheight = (chainActive.Tip()->nHeight - out.nDepth - 1);
+        
 
         entry.push_back(Pair("scriptPubKey", HexStr(scriptPubKey.begin(), scriptPubKey.end())));
         entry.push_back(Pair("amount", ValueFromAmount(out.tx->vout[out.i].nValue)));
-        //entry.push_back(Pair("confirmations", out.nDepth));
-        entry.push_back(Pair("rawconfirmations",out.nDepth));
-        entry.push_back(Pair("confirmations",komodo_dpowconfs(txheight,out.nDepth)));
+        if(dpowenabled())
+        {
+            // Dpow Enabled
+             printf("NOTE (rpcwallet.cpp) -> DPOW Enabled");
+            int32_t txheight = -1;
+            if ( chainActive.Tip() != NULL )
+                txheight = (chainActive.Tip()->nHeight - out.nDepth - 1);
+
+            entry.push_back(Pair("rawconfirmations",out.nDepth));
+            entry.push_back(Pair("confirmations",komodo_dpowconfs(txheight,out.nDepth)));
+        }
+        else
+        {
+
+            // Dpow Disabled 
+             printf("NOTE (rpcwallet.cpp) -> DPOW Disabled");
+           entry.push_back(Pair("confirmations", out.nDepth));
+        } 
+        //
+        
         entry.push_back(Pair("spendable", out.fSpendable));
         entry.push_back(Pair("solvable", out.fSolvable));
         results.push_back(entry);

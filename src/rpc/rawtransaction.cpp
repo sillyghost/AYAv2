@@ -119,8 +119,23 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry)
             CBlockIndex* pindex = (*mi).second;
             if (chainActive.Contains(pindex)) {
               //  entry.push_back(Pair("confirmations", 1 + chainActive.Height() - pindex->nHeight));
+                 
+            if(dpowenabled())
+            {
+               // Dpow Enabled
+                printf("NOTE (rawtransactions.cpp) -> DPOW Enabled");
                 entry.push_back(Pair("rawconfirmations", 1 + chainActive.Height() - pindex->nHeight));
                 entry.push_back(Pair("confirmations", komodo_dpowconfs(pindex->nHeight,1 + chainActive.Height() - pindex->nHeight)));
+            
+            }
+            else
+            {
+
+                // Dpow Disabled 
+                printf("NOTE (rawtransactions.cpp) -> DPOW Disabled");
+                entry.push_back(Pair("confirmations", 1 + chainActive.Height() - pindex->nHeight));
+            }
+                
 
                 entry.push_back(Pair("time", pindex->GetBlockTime()));
                 entry.push_back(Pair("blocktime", pindex->GetBlockTime()));
