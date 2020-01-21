@@ -481,8 +481,8 @@ std::string HelpMessage(HelpMessageMode mode)
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/aryacoin-project/aryacoin>";
-    const std::string URL_WEBSITE = "<https://aryacoin.org>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/Aryacoin/Aryacoin>";
+    const std::string URL_WEBSITE = "<https://aryacoin.io>";
     // todo: remove urls from translations on next change
     return CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2011, COPYRIGHT_YEAR) + " ") + "\n" +
            "\n" +

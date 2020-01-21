@@ -29,7 +29,7 @@ Build Aryacoin Core
 
 1. Clone the aryacoin source code and cd into `aryacoin`
 
-        git clone https://github.com/aryacoin-project/aryacoin
+        git clone https://github.com/Aryacoin/Aryacoin
         cd aryacoin
 
 2.  Build aryacoin-core:

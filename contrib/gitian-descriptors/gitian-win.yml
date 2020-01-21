@@ -22,7 +22,7 @@ packages:
 - "ca-certificates"
 - "python"
 remotes:
-- "url": "https://github.com/aryacoin-project/aryacoin.git"
+- "url": "https://github.com/Aryacoin/Aryacoin.git"
   "dir": "aryacoin"
 files: []
 script: |

@@ -3,7 +3,7 @@ Aryacoin Core integration/staging tree
 
 [![Build Status](https://travis-ci.org/aryacoin-project/aryacoin.svg?branch=master)](https://travis-ci.org/aryacoin-project/aryacoin)
 
-https://aryacoin.org
+https://aryacoin.io
 
 What is Aryacoin?
 ----------------
@@ -15,7 +15,7 @@ out collectively by the network. Aryacoin Core is the name of open source
 software which enables the use of this currency.
 
 For more information, as well as an immediately useable, binary version of
-the Aryacoin Core software, see [https://aryacoin.org](https://aryacoin.org).
+the Aryacoin Core software, see [https://aryacoin.io](https://aryacoin.io).
 
 License
 -------
@@ -27,7 +27,7 @@ Development Process
 -------------------
 
 The `master` branch is regularly built and tested, but is not guaranteed to be
-completely stable. [Tags](https://github.com/aryacoin-project/aryacoin/tags) are created
+completely stable. [Tags](https://github.com/Aryacoin/Aryacoin/tags) are created
 regularly to indicate new official, stable release versions of Aryacoin Core.
 
 The contribution workflow is described in [CONTRIBUTING.md](CONTRIBUTING.md).

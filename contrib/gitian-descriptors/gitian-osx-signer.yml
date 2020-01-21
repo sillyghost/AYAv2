@@ -7,7 +7,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/aryacoin-project/aryacoin-detached-sigs.git"
+- "url": "https://github.com/Aryacoin/Aryacoin-detached-sigs.git"
   "dir": "signature"
 files:
 - "aryacoin-osx-unsigned.tar.gz"
