@@ -14,18 +14,23 @@ Unix
 `python3-zmq` and `aryacoin_scrypt` are required. On Ubuntu or Debian they can be installed via:
 ```
 sudo apt-get install python3-zmq
-pip3 install aryacoin_scrypt
+pip3 install litecoin_scrypt
 ```
 
 OS X
 ------
 ```
 pip3 install pyzmq
-pip3 install aryacoin_scrypt
+pip3 install litecoin_scrypt
 ```
 
 Running tests
 =============
+
+You can run DPOW related tests by calling
+
+    qa/rpc-tests/dpow.py
+    qa/rpc-tests/dpowconfs.py
 
 You can run any single test by calling
 
