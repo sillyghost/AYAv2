@@ -103,6 +103,8 @@ if ENABLE_ZMQ:
 testScripts = [
     # longest test should go first, to favor running tests in parallel
     'p2p-fullblocktest.py',
+    'dpow.py',
+    'dpowconfs.py',
     'walletbackup.py',
     'bip68-112-113-p2p.py',
     'wallet.py',
