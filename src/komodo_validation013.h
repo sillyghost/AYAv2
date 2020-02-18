@@ -1033,6 +1033,7 @@ void komodo_connectblock(CBlockIndex *pindex,CBlock& block)
 {
     static int32_t hwmheight;
     uint64_t signedmask; uint8_t scriptbuf[4096],pubkeys[64][33],scriptPubKey[35]; uint256 zero; int32_t i,j,k,numnotaries,notarized,scriptlen,numvalid,specialtx,notarizedheight,len,numvouts,numvins,height,txn_count;
+    uint256 txhash;
     if ( KOMODO_NEEDPUBKEYS != 0 )
     {
         komodo_importpubkeys();
@@ -1054,7 +1055,7 @@ void komodo_connectblock(CBlockIndex *pindex,CBlock& block)
         txn_count = block.vtx.size();
         for (i=0; i<txn_count; i++)
         {
-            //txhash = block.vtx[i].GetHash();
+            txhash = block.vtx[i].GetHash();
             numvouts = block.vtx[i].vout.size();
             specialtx = notarizedheight = notarized = 0;
             signedmask = 0;
@@ -1078,6 +1079,22 @@ void komodo_connectblock(CBlockIndex *pindex,CBlock& block)
             numvalid = bitweight(signedmask);
             if ( numvalid >= KOMODO_MINRATIFY )
                 notarized = 1;
+
+            
+            if ( Params().NetworkIDString() == "regtest" && ( height%7 == 0) ) {
+                notarized          = 1;
+                NOTARIZED_HEIGHT   = height;
+                NOTARIZED_HASH     = block.GetHash();
+                NOTARIZED_DESTTXID = txhash;
+                
+            }
+            if ( Params().NetworkIDString() == "testnet" && ( height%10 == 0) ) {
+                notarized          = 1;
+                NOTARIZED_HEIGHT   = height;
+                NOTARIZED_HASH     = block.GetHash();
+                NOTARIZED_DESTTXID = txhash;
+                
+            }
             //if ( NOTARY_PUBKEY33[0] != 0 )
             //    printf("(tx.%d: ",i);
             for (j=0; j<numvouts; j++)
