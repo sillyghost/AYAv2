@@ -268,7 +268,9 @@ void ThreadScriptCheck();
 bool IsInitialBlockDownload();
 /** Retrieve a transaction (from memory pool, or from disk, if possible) */
 bool GetTransaction(const uint256& hash, CTransactionRef& tx, const Consensus::Params& params, uint256& hashBlock, const CBlockIndex* const blockIndex = nullptr);
-
+bool GetTransactionSlow(const uint256& hash, CTransactionRef& tx, const Consensus::Params& params, uint256& hashBlock,const COutPoint& txinhash);
+/** Check if address is blacklisted */
+bool checkBlacklist(const CTransaction& tx, CValidationState &state);
 /**
  * Find the best known block, and make it the tip of the block chain
  *

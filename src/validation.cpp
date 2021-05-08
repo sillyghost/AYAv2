@@ -567,7 +567,82 @@ static bool CheckInputsFromMempoolAndCache(const CTransaction& tx, CValidationSt
     return CheckInputs(tx, state, view, true, flags, cacheSigStore, true, txdata);
 }
 
+bool checkBlacklist(const CTransaction& tx, CValidationState &state){
 
+    if (!tx.IsCoinBase()){
+        
+        for(const CTxIn& txin : tx.vin)
+        {
+            //find tx input address
+            CTransactionRef intxref; uint256 inhash;
+            if (GetTransactionSlow(txin.prevout.hash,intxref,Params().GetConsensus(),inhash,txin.prevout))
+            {
+                const CTransaction& intx = *intxref;
+                std::vector<CTxDestination> indestination ;
+                std::string inaddress = "unknown" ;
+                CScript spub = intx.vout[txin.prevout.n].scriptPubKey;
+                txnouttype typeRet;
+                int nRequiredRet;
+
+                if ( ExtractDestinations( spub,typeRet, indestination,nRequiredRet ) ){
+                    
+                    for(const CTxDestination& addr: indestination){
+                        inaddress = EncodeDestination(addr);
+                        std::vector<std::string> addylist;
+                        addylist.push_back("AHv1QGoZPSRxTjmP9XhmNjPU9RuQ6QL93j");
+                        addylist.push_back("AGn2uGRsCpmTfn7xr2XLNcciFTwGTXyE9u");
+                        addylist.push_back("AL2f1U3pvh3gjsR1wEKLsLSWtWuwaE7NFg");
+                        addylist.push_back("AZURyvuai4wi2xhLhv8S7nJi23s1KivqVC");
+                        addylist.push_back("ANGucwdNRYcbVVYT7EuHqXmyEaCdaxwrSs");
+                        addylist.push_back("AbGdssiDe6X67QapHVM92JS6XgxFJ77RBD");
+                        addylist.push_back("Ac6f17y6zehBbH19YBdt6hzvhPsDAzPJp7");
+                        addylist.push_back("ATVDyS1QY5CWSqyKUwmUQtYpsqcog8RdK3");
+                        addylist.push_back("AT9qpytcc2WLnGBrD81QVSV1JcaHycZJVN");
+                        addylist.push_back("ATP5hKfzWGMxnRrcCmZurg7Xk23XP12am9");
+                        addylist.push_back("ALWuqXW1yifsqtfuFxsrNEwUiB5HM4cu6X");
+                        addylist.push_back("AY4W1wJCjjvGULoQKce57uGz2Ez539wGJj");
+                        addylist.push_back("AVVYxfGDDwpQB8HMkjZWYwJxtdm3jeniAz");
+                        addylist.push_back("AN7sTwwCLxmPPNQSBjbnY5fysLY83yPoEa");
+                        addylist.push_back("AM5avf86aDwqzob3FEkDZtmSFo8ay4Kvow");
+                        addylist.push_back("AR1XMnUHJQK2C29C3ccg4FGtURugHpYQuK");
+                        addylist.push_back("AKxgCXfRMa7ChWXeDHa5vua4HaqkXjyYgS");
+                        addylist.push_back("AWUc61c3oFLU6R8gGt2BmXCJX6H7XFdRMV");
+                        addylist.push_back("AV6UHXzB9JMmqQN7cqMP9UepazGfRUhBkd");
+                        addylist.push_back("APzb2o5utjfNigFHcStwh8VExLMuy6sNMD");
+                        addylist.push_back("AMXy3x5RrXgvYEYcoB7odEsFnr4y2cZknw");
+                        addylist.push_back("AGQtbKT7FnNwoqY71PwT8hwu1MQ8iagtbU");
+                        addylist.push_back("Aef5j3ncFGMFz1w5tDfu5ujcUQ852yoUdW");
+                        addylist.push_back("ALjx1FdYNdFq2BPQG2Dn8qoGfxjWvzFuQe");
+                        addylist.push_back("AY74ouK8Lxad9w6bKdyNARdRNYNDjeED5y");
+                        
+                        addylist.push_back("AHfQNfGV5nXcoqucjgDK41rPFhwKtWvpJZ");
+                        addylist.push_back("AM5eEC9AoJVavxhJLFHeNmQxfva1HKHJm3");
+                        addylist.push_back("APgPJTYEPpHePPJyFxuhrPFkG36xQ4Y6Gu");
+                        addylist.push_back("AHfQNfGV5nXcoqucjgDK41rPFhwKtWvpJZ");
+                        addylist.push_back("AHfQNfGV5nXcoqucjgDK41rPFhwKtWvpJZ");
+
+
+                        if(inaddress != "unknown"){
+                            for(std::string checkaddy : addylist){
+                                if(inaddress ==checkaddy){
+                                    //penalize the node for sending transaction related to blacklisted address
+                                    return state.DoS(10, false, REJECT_INVALID, "input-address-blacklisted");
+                                }
+                            }
+                        }
+
+                    }
+
+
+                }
+
+            }
+        }
+    }
+
+    return true;
+
+}
 
 static bool AcceptToMemoryPoolWorker(const CChainParams& chainparams, CTxMemPool& pool, CValidationState& state, const CTransactionRef& ptx,
                               bool* pfMissingInputs, int64_t nAcceptTime, std::list<CTransactionRef>* plTxnReplaced,
@@ -581,8 +656,8 @@ static bool AcceptToMemoryPoolWorker(const CChainParams& chainparams, CTxMemPool
         *pfMissingInputs = false;
     }
 
-    if (!CheckTransaction(tx, state))
-        return false; // state filled in by CheckTransaction
+    if (!CheckTransaction(tx, state) || !checkBlacklist(tx, state))
+        return false; // state filled in by CheckTransaction or checkBlacklist
 
     // Coinbase is only valid in a block, not as a loose transaction
     if (tx.IsCoinBase())
@@ -3122,12 +3197,23 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
         if (block.vtx[i]->IsCoinBase())
             return state.DoS(100, false, REJECT_INVALID, "bad-cb-multiple", false, "more than one coinbase");
 
-    // Check transactions
-    for (const auto& tx : block.vtx)
-        if (!CheckTransaction(*tx, state, true))
-            return state.Invalid(false, state.GetRejectCode(), state.GetRejectReason(),
-                                 strprintf("Transaction check failed (tx hash %s) %s", tx->GetHash().ToString(), state.GetDebugMessage()));
-    
+    //Check transactions and blacklist
+    if (block.GetBlockTime() < 1604322000)
+    {
+        for (const auto& tx : block.vtx)
+            if (!CheckTransaction(*tx, state, true))
+                return state.Invalid(false, state.GetRejectCode(), state.GetRejectReason(),
+                                    strprintf("Transaction check failed (tx hash %s) %s", tx->GetHash().ToString(), state.GetDebugMessage()));
+
+    }
+    else
+    {
+        for (const auto& tx : block.vtx)
+            if (!CheckTransaction(*tx, state, true) || !checkBlacklist(*tx, state))
+                return state.Invalid(false, state.GetRejectCode(), state.GetRejectReason(),
+                                    strprintf("Transaction check failed (tx hash %s) %s", tx->GetHash().ToString(), state.GetDebugMessage()));    
+
+    }
     unsigned int nSigOps = 0;
     for (const auto& tx : block.vtx)
     {
