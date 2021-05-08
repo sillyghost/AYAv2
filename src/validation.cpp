@@ -1114,6 +1114,50 @@ bool GetTransaction(const uint256& hash, CTransactionRef& txOut, const Consensus
     return false;
 }
 
+bool GetTransactionSlow(const uint256& hash, CTransactionRef& txOut, const Consensus::Params& consensusParams, uint256& hashBlock,const COutPoint& txinhash)
+{
+    LOCK(cs_main);
+    CBlockIndex *pindexSlow = NULL;
+    if (true) {
+        CTransactionRef ptx = mempool.get(hash);
+        if (ptx) {
+            txOut = ptx;
+            return true;
+        }
+
+        if (g_txindex) {
+            return g_txindex->FindTx(hash, hashBlock, txOut);
+        }
+
+        //fall back slow approach
+
+        int nHeight = -1;
+        const CCoinsViewCache& view = *pcoinsTip;
+        const Coin& coins = view.AccessCoin(txinhash);
+        if (!coins.IsCoinBase())
+            nHeight = coins.nHeight;
+
+        if (nHeight > 0)
+            pindexSlow = chainActive[nHeight];
+
+        if (pindexSlow) {
+            CBlock block;
+            if (ReadBlockFromDisk(block, pindexSlow, consensusParams)) {
+                for(const CTransactionRef& tx: block.vtx) {
+                    if (tx->GetHash() == hash) {
+                        txOut = tx;
+                        hashBlock = pindexSlow->GetBlockHash();
+                        return true;
+                    }
+                }
+            }
+        }
+
+
+    } 
+
+    return false;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //
