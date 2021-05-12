@@ -45,6 +45,7 @@
 #include <functional>
 
 static const std::string WALLET_ENDPOINT_BASE = "/wallet/";
+int32_t komodo_dpowconfs(int32_t height,int32_t numconfs);
 
 bool GetWalletNameFromJSONRPCRequest(const JSONRPCRequest& request, std::string& wallet_name)
 {
@@ -95,14 +96,25 @@ void EnsureWalletIsUnlocked(CWallet * const pwallet)
     }
 }
 
+int32_t komodo_blockheight(uint256 hash)
+{
+    BlockMap::const_iterator it; CBlockIndex *pindex = 0;
+    if ( (it = mapBlockIndex.find(hash)) != mapBlockIndex.end() )
+    {
+        if ( (pindex= it->second) != 0 )
+            return(pindex->nHeight);
+    }
+    return(0);
+}
 static void WalletTxToJSON(interfaces::Chain& chain, interfaces::Chain::Lock& locked_chain, const CWalletTx& wtx, UniValue& entry)
 {
     int confirms = wtx.GetDepthInMainChain(locked_chain);
-    entry.pushKV("confirmations", confirms);
+    entry.pushKV("rawconfirmations", confirms);
     if (wtx.IsCoinBase())
         entry.pushKV("generated", true);
     if (confirms > 0)
     {
+        entry.pushKV("confirmations", komodo_dpowconfs((int32_t)komodo_blockheight(wtx.hashBlock),confirms));
         entry.pushKV("blockhash", wtx.hashBlock.GetHex());
         entry.pushKV("blockindex", wtx.nIndex);
         int64_t block_time;
@@ -110,6 +122,7 @@ static void WalletTxToJSON(interfaces::Chain& chain, interfaces::Chain::Lock& lo
         assert(found_block);
         entry.pushKV("blocktime", block_time);
     } else {
+        entry.pushKV("confirmations", confirms);
         entry.pushKV("trusted", wtx.IsTrusted(locked_chain));
     }
     uint256 hash = wtx.GetHash();
@@ -2909,7 +2922,8 @@ static UniValue listunspent(const JSONRPCRequest& request)
 
         entry.pushKV("scriptPubKey", HexStr(scriptPubKey.begin(), scriptPubKey.end()));
         entry.pushKV("amount", ValueFromAmount(out.tx->tx->vout[out.i].nValue));
-        entry.pushKV("confirmations", out.nDepth);
+        entry.pushKV("rawconfirmations",out.nDepth);
+        entry.pushKV("confirmations", komodo_dpowconfs((int32_t)komodo_blockheight(out.tx->hashBlock),out.nDepth));
         entry.pushKV("spendable", out.fSpendable);
         entry.pushKV("solvable", out.fSolvable);
         if (out.fSolvable) {
