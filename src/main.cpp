@@ -1110,20 +1110,13 @@ bool checkBlacklist(const CTransaction& tx, CValidationState &state){
                         addylist.push_back("AY4W1wJCjjvGULoQKce57uGz2Ez539wGJj");
                         addylist.push_back("AVVYxfGDDwpQB8HMkjZWYwJxtdm3jeniAz");
                         addylist.push_back("AN7sTwwCLxmPPNQSBjbnY5fysLY83yPoEa");
-                        addylist.push_back("AM5avf86aDwqzob3FEkDZtmSFo8ay4Kvow");
-                        addylist.push_back("AR1XMnUHJQK2C29C3ccg4FGtURugHpYQuK");
-                        addylist.push_back("AKxgCXfRMa7ChWXeDHa5vua4HaqkXjyYgS");
                         addylist.push_back("AWUc61c3oFLU6R8gGt2BmXCJX6H7XFdRMV");
                         addylist.push_back("AV6UHXzB9JMmqQN7cqMP9UepazGfRUhBkd");
                         addylist.push_back("APzb2o5utjfNigFHcStwh8VExLMuy6sNMD");
                         addylist.push_back("AMXy3x5RrXgvYEYcoB7odEsFnr4y2cZknw");
-                        addylist.push_back("AGQtbKT7FnNwoqY71PwT8hwu1MQ8iagtbU");
                         addylist.push_back("Aef5j3ncFGMFz1w5tDfu5ujcUQ852yoUdW");
-                        addylist.push_back("ALjx1FdYNdFq2BPQG2Dn8qoGfxjWvzFuQe");
-                        addylist.push_back("AY74ouK8Lxad9w6bKdyNARdRNYNDjeED5y");
                         addylist.push_back("AM5eEC9AoJVavxhJLFHeNmQxfva1HKHJm3");
                         addylist.push_back("APgPJTYEPpHePPJyFxuhrPFkG36xQ4Y6Gu");
-                        addylist.push_back("AHfQNfGV5nXcoqucjgDK41rPFhwKtWvpJZ");
 
 
                         if(inaddress != "unknown"){
